@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  emailVerified      Boolean             @default(false)
+  passwordHash       String
+  name               String
+  theme              String
+  timezone           String
+  startedAt          DateTime
+  locale             String
+  schedule           Json
+  sessions           Session[]
+  exceptions         Exception[]
+  verificationTokens VerificationToken[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+// Schedule looks something like: {monday: 450, tuesday: 480, ...}
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+}
+
+model VerificationToken {
+  id        String                @id @default(cuid())
+  tokenHash String                @unique
+  type      VerificationTokenType
+  payload   Json? // Additional data as needed
+  expiresAt DateTime
+  createdAt DateTime              @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId, type, expiresAt]) // For lookups at usage time
+  @@index([expiresAt]) // For cleanup jobs
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  start     DateTime
+  end       DateTime?
+  note      String    @default("")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Exception {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  start     DateTime
+  end       DateTime
+  type      String
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
