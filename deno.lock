@@ -2,12 +2,16 @@
   "version": "5",
   "specifiers": {
     "jsr:@hono/hono@^4.10.6": "4.10.6",
+    "jsr:@hono/hono@^4.8.3": "4.10.6",
+    "jsr:@hono/zod-validator@*": "0.7.5",
+    "jsr:@hono/zod-validator@~0.7.5": "0.7.5",
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@zod/zod@^4.1.13": "4.1.13",
     "npm:@prisma/adapter-pg@7": "7.0.0",
     "npm:@prisma/client@7": "7.0.0_prisma@7.0.0",
     "npm:@types/node@*": "24.2.0",
+    "npm:bcryptjs@^3.0.3": "3.0.3",
     "npm:dotenv@^17.2.3": "17.2.3",
     "npm:prisma@*": "7.0.0",
     "npm:prisma@7": "7.0.0"
@@ -15,6 +19,12 @@
   "jsr": {
     "@hono/hono@4.10.6": {
       "integrity": "bcbbf9753a3570f2fa4609484bae0cead85a3feb110ee9ceb7ffc37d845d9a4d"
+    },
+    "@hono/zod-validator@0.7.5": {
+      "integrity": "aeecfc6e7176963598b4d97091873e8d3b2fc74ff5d731b21acaf8ced94bb565",
+      "dependencies": [
+        "jsr:@hono/hono@^4.8.3"
+      ]
     },
     "@std/assert@1.0.16": {
       "integrity": "6a7272ed1eaa77defe76e5ff63ca705d9c495077e2d5fd0126d2b53fc5bd6532",
@@ -205,6 +215,10 @@
     },
     "aws-ssl-profiles@1.1.2": {
       "integrity": "sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g=="
+    },
+    "bcryptjs@3.0.3": {
+      "integrity": "sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==",
+      "bin": true
     },
     "c12@3.1.0": {
       "integrity": "sha512-uWoS8OU1MEIsOv8p/5a82c3H31LsWVR5qiyXVfBNOzfffjUWtPnhAb4BYI2uG2HfGmZmFjCtui5XNWaps+iFuw==",
@@ -614,10 +628,12 @@
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@^4.10.6",
+      "jsr:@hono/zod-validator@~0.7.5",
       "jsr:@std/assert@^1.0.16",
       "jsr:@zod/zod@^4.1.13",
       "npm:@prisma/adapter-pg@7",
       "npm:@prisma/client@7",
+      "npm:bcryptjs@^3.0.3",
       "npm:dotenv@^17.2.3",
       "npm:prisma@7"
     ]

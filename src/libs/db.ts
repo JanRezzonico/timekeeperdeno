@@ -1,9 +1,10 @@
 import { PrismaClient } from "prismaclient";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { env } from "./env.ts";
 
 const db = new PrismaClient({
   adapter: new PrismaPg({
-    connectionString: Deno.env.get("DATABASE_URL")!,
+    connectionString: env.DATABASE_URL,
   }),
 });
 
