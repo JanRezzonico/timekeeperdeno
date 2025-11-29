@@ -5,11 +5,42 @@ import { Context, Next } from "hono";
 import type { User } from "prismaclient";
 import db from "../../libs/db.ts";
 import { HTTPException } from "hono/http-exception";
+import { getCookie, setCookie } from "hono/cookie";
+import { Jwt } from "hono/utils/jwt";
+import { consumeRefreshToken } from "../../libs/redis.ts";
+import { sign } from "../../libs/jwt.ts";
 
-const jwtCheck = jwt({
-  secret: env.JWT_SECRET,
-  cookie: cookies.jwt.name,
-});
+const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
+  const token = getCookie(c, cookies.jwt.name);
+  let payload;
+  try {
+    payload = token ? await Jwt.verify(token, env.JWT_SECRET) : false;
+  } catch {
+    payload = false;
+  }
+
+  if (!payload) {
+    const refreshToken = getCookie(c, cookies.refreshToken.name);
+    if (!refreshToken) throw new HTTPException(401);
+
+    const consumationResult = await consumeRefreshToken(refreshToken);
+    if (!consumationResult) throw new HTTPException(401);
+    const { userId, newToken } = consumationResult;
+    const newJwt = await sign(userId);
+    setCookie(c, cookies.jwt.name, newJwt, cookies.jwt.options);
+    setCookie(
+      c,
+      cookies.refreshToken.name,
+      newToken,
+      cookies.refreshToken.options
+    );
+    c.set("jwtPayload", { sub: userId });
+    await next();
+    return;
+  }
+  c.set("jwtPayload", payload);
+  await next();
+};
 
 type AuthenticatedVariables = JwtVariables & { user: User };
 

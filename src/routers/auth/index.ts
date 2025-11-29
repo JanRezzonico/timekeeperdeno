@@ -4,9 +4,10 @@ import createUser from "./createUser.ts";
 import z from "@zod/zod";
 import { zValidator } from "@hono/zod-validator";
 import { sign } from "../../libs/jwt.ts";
-import { deleteCookie, setCookie } from "hono/cookie";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import userSchema from "../../schemas/userSchema.ts";
 import cookies from "../../libs/cookies.ts";
+import { createRefreshToken, deleteRefreshToken } from "../../libs/redis.ts";
 
 const authRouter = new Hono();
 
@@ -20,14 +21,24 @@ authRouter.post("/login", zValidator("json", loginSchema), async (c) => {
   const body = c.req.valid("json");
   const user = await login(body);
   const jwt = await sign(user.id);
+  const refreshToken = createRefreshToken(user.id);
 
   setCookie(c, cookies.jwt.name, jwt, cookies.jwt.options);
+  setCookie(
+    c,
+    cookies.refreshToken.name,
+    refreshToken,
+    cookies.refreshToken.options
+  );
 
   return c.json({ message: "Login successful" });
 });
 
 authRouter.post("/logout", (c) => {
   deleteCookie(c, cookies.jwt.name);
+  const refreshToken = getCookie(c, cookies.refreshToken.name);
+  if (refreshToken) deleteRefreshToken(refreshToken);
+  deleteCookie(c, cookies.refreshToken.name);
   return c.json({ message: "Logout successful" });
 });
 
@@ -35,8 +46,15 @@ authRouter.post("/signup", zValidator("json", signupSchema), async (c) => {
   const body = c.req.valid("json");
   const user = await createUser(body);
   const jwt = await sign(user.id);
+  const refreshToken = createRefreshToken(user.id);
 
   setCookie(c, cookies.jwt.name, jwt, cookies.jwt.options);
+  setCookie(
+    c,
+    cookies.refreshToken.name,
+    refreshToken,
+    cookies.refreshToken.options
+  );
 
   return c.json({ message: "Signup successful" });
 });

@@ -11,7 +11,8 @@
     "dotenv": "npm:dotenv@^17.2.3",
     "prisma": "npm:prisma@^7.0.0",
     "prismaclient": "./prisma/generated/client.ts",
-    "hono": "jsr:@hono/hono@^4.10.6"
+    "hono": "jsr:@hono/hono@^4.10.6",
+    "redis": "npm:redis@^5.10.0"
   },
   "permissions": {
     "default": {
