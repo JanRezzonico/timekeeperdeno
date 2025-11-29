@@ -6,7 +6,7 @@ import causesSessionOverlap from "./util/causesSessionOverlap.ts";
 const patchSessionForUser = async (
   sessionId: string,
   body: PatchSessionSchema,
-  userId: string
+  userId: string,
 ) => {
   const { start, end } = body;
   const existingResource = await db.session.findUnique({
@@ -23,7 +23,7 @@ const patchSessionForUser = async (
     actualStart,
     actualEnd,
     userId,
-    sessionId
+    sessionId,
   );
 
   if (causesOverlap) {

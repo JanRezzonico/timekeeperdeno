@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import db from "./src/libs/db.ts";
 import authRouter from "./src/routers/auth/index.ts";
-import authMiddleware from "./src/utils/middlewares/authMiddleware.ts";
 import userRouter from "./src/routers/user/index.ts";
 
 const app = new Hono();

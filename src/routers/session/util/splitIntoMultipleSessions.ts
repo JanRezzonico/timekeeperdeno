@@ -1,5 +1,5 @@
 import { CreateSessionSchema } from "../index.ts";
-import { isSameDay, endOfDay, addDays, startOfDay } from "date-fns";
+import { addDays, endOfDay, isSameDay, startOfDay } from "date-fns";
 
 const splitIntoMultipleSessions = (session: CreateSessionSchema) => {
   if (session.end === null) return [session];

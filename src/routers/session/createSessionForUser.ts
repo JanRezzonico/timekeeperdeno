@@ -6,7 +6,7 @@ import splitIntoMultipleSessions from "./util/splitIntoMultipleSessions.ts";
 
 const createSessionForUser = async (
   body: CreateSessionSchema,
-  userId: string
+  userId: string,
 ) => {
   const { start, end } = body;
   const causesOverlap = await causesSessionOverlap(start, end, userId);

@@ -10,4 +10,4 @@ const getSubOrThrow = (c: Context) => {
   return sub as string;
 };
 
-export { sign, getSubOrThrow };
+export { getSubOrThrow, sign };

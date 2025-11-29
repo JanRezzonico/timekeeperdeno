@@ -12,7 +12,6 @@ import db from "../../../libs/db.ts";
  *
  * For ongoing sessions (`end === null`), they are considered to extend indefinitely into the future.
  *
- *
  * @param start - session start date
  * @param end - session end date, or null if ongoing
  * @param userId - ID of the user
@@ -23,7 +22,7 @@ const causesSessionOverlap = async (
   start: Date,
   end: Date | null,
   userId: string,
-  selfSessionId?: string
+  selfSessionId?: string,
 ) => {
   const virtualEnd = end ?? getMaxDate();
   const existingSessions = await db.session.findMany({
