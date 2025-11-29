@@ -27,7 +27,7 @@ authRouter.post("/login", zValidator("json", loginSchema), async (c) => {
 });
 
 authRouter.post("/logout", (c) => {
-  deleteCookie(c, "prova123");
+  deleteCookie(c, cookies.jwt.name);
   return c.json({ message: "Logout successful" });
 });
 
