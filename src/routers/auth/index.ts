@@ -3,7 +3,7 @@ import login from "./login.ts";
 import createUser from "./createUser.ts";
 import z from "@zod/zod";
 import { zValidator } from "@hono/zod-validator";
-import { sign } from "../../libs/jwt.ts";
+import { signJwt } from "../../libs/jwt.ts";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import userSchema from "../../schemas/userSchema.ts";
 import cookies from "../../libs/cookies.ts";
@@ -28,7 +28,7 @@ const emailVerificationQuerySchema = z.object({
 authRouter.post("/login", zValidator("json", loginSchema), async (c) => {
   const body = c.req.valid("json");
   const user = await login(body);
-  const jwt = await sign(user.id);
+  const jwt = await signJwt(user.id);
   const refreshToken = createRefreshToken(user.id);
 
   setCookie(c, cookies.jwt.name, jwt, cookies.jwt.options);
@@ -53,7 +53,7 @@ authRouter.post("/logout", (c) => {
 authRouter.post("/signup", zValidator("json", signupSchema), async (c) => {
   const body = c.req.valid("json");
   const user = await createUser(body);
-  const jwt = await sign(user.id);
+  const jwt = await signJwt(user.id);
   const refreshToken = createRefreshToken(user.id);
 
   setCookie(c, cookies.jwt.name, jwt, cookies.jwt.options);
@@ -74,7 +74,7 @@ authRouter.post("/verify-email", authMiddleware, async (c) => {
   }
   await sendVerificationEmail(id, email);
   console.log("Verification email sent to:", email);
-  return c.body(null, 204);
+  return c.json({ message: "Success" });
 });
 
 authRouter.get(
@@ -83,7 +83,7 @@ authRouter.get(
   async (c) => {
     const { token, email } = c.req.valid("query");
     await verifyEmail(token, email);
-    return c.body(null, 204);
+    return c.json({ message: "Success" });
   }
 );
 

@@ -1,6 +1,6 @@
 import { createClient } from "redis";
 import { env } from "./env.ts";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
 
 const redis = createClient({
@@ -11,7 +11,8 @@ await redis.connect();
 
 const createRefreshToken = (userId: string) => {
   const token = randomBytes(32).toString("hex");
-  redis.set(`refresh_token:${token}`, userId, {
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  redis.set(`refresh_token:${tokenHash}`, userId, {
     expiration: {
       type: "EX",
       value: env.REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60,
@@ -21,9 +22,10 @@ const createRefreshToken = (userId: string) => {
 };
 
 const consumeRefreshToken = async (token: string) => {
-  const userId = await redis.get(`refresh_token:${token}`);
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const userId = await redis.get(`refresh_token:${tokenHash}`);
   if (userId) {
-    await redis.del(`refresh_token:${token}`); // Delete the consumed token
+    await redis.del(`refresh_token:${tokenHash}`); // Delete the consumed token
     const newToken = createRefreshToken(userId); // Create a new refresh token
     return {
       userId,
@@ -34,7 +36,8 @@ const consumeRefreshToken = async (token: string) => {
 };
 
 const deleteRefreshToken = async (token: string) => {
-  await redis.del(`refresh_token:${token}`);
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  await redis.del(`refresh_token:${tokenHash}`);
 };
 
 const createEmailVerificationToken = async (userId: string, email: string) => {

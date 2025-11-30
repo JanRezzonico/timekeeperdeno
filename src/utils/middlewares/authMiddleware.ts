@@ -8,27 +8,26 @@ import { HTTPException } from "hono/http-exception";
 import { getCookie, setCookie } from "hono/cookie";
 import { Jwt } from "hono/utils/jwt";
 import { consumeRefreshToken } from "../../libs/redis.ts";
-import { sign } from "../../libs/jwt.ts";
+import { signJwt } from "../../libs/jwt.ts";
 
 const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
   const token = getCookie(c, cookies.jwt.name);
-  let payload;
-  try {
-    payload = token ? await Jwt.verify(token, env.JWT_SECRET) : false;
-  } catch {
-    payload = false;
-  }
+  const payload = await Jwt.verify(token || "", env.JWT_SECRET).catch(
+    () => null
+  );
 
   if (payload) {
+    console.log("JWT valid, proceeding.");
     c.set("jwtPayload", payload);
   } else {
+    console.log("JWT invalid or expired, attempting refresh.");
     const refreshToken = getCookie(c, cookies.refreshToken.name);
     if (!refreshToken) throw new HTTPException(401);
 
     const consumationResult = await consumeRefreshToken(refreshToken);
     if (!consumationResult) throw new HTTPException(401);
     const { userId, newToken } = consumationResult;
-    const newJwt = await sign(userId);
+    const newJwt = await signJwt(userId);
     setCookie(c, cookies.jwt.name, newJwt, cookies.jwt.options);
     setCookie(
       c,
@@ -36,6 +35,7 @@ const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
       newToken,
       cookies.refreshToken.options
     );
+    console.log("Refresh successful, new tokens issued.");
     c.set("jwtPayload", { sub: userId });
   }
   await next();

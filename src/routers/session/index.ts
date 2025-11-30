@@ -59,7 +59,7 @@ sessionRouter.patch(
     const { id } = c.req.param();
     const body = c.req.valid("json");
     await patchSessionForUser(id, body, userId);
-    return c.body(null, 204);
+    return c.json({ message: "Success" });
   }
 );
 
@@ -67,7 +67,7 @@ sessionRouter.delete("/:id", async (c) => {
   const { id: userId } = c.get("user");
   const { id } = c.req.param();
   await deleteSessionByIdForUser(id, userId);
-  return c.body(null, 204);
+  return c.json({ message: "Success" });
 });
 
 export default sessionRouter;

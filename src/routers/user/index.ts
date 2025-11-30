@@ -29,13 +29,13 @@ userRouter.patch("/", zValidator("json", patchSchema), async (c) => {
   if (isChangingEmail) {
     await deleteEmailVerificationToken(id, email);
   }
-  return c.body(null, 204);
+  return c.json({ message: "Success" });
 });
 
 userRouter.delete("/", async (c) => {
   const { id } = c.get("user");
   await deleteUser(id);
-  return c.body(null, 204);
+  return c.json({ message: "Success" });
 });
 
 export default userRouter;
