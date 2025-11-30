@@ -1,4 +1,4 @@
-import { jwt, JwtVariables } from "hono/jwt";
+import { JwtVariables } from "hono/jwt";
 import { env } from "../../libs/env.ts";
 import cookies from "../../libs/cookies.ts";
 import { Context, Next } from "hono";

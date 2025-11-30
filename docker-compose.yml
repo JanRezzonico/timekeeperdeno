@@ -1,4 +1,4 @@
-name: provadeno-postgres-pgadmin
+name: timekeeperdeno-postgres-pgadmin
 services:
   postgres:
     image: postgres:16

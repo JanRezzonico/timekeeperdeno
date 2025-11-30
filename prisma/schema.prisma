@@ -21,31 +21,12 @@ model User {
   schedule           Json
   sessions           Session[]
   exceptions         Exception[]
-  verificationTokens VerificationToken[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
 
 // Schedule looks something like: {monday: 450, tuesday: 480, ...}
 
-enum VerificationTokenType {
-  EMAIL_VERIFICATION
-}
-
-model VerificationToken {
-  id        String                @id @default(cuid())
-  tokenHash String                @unique
-  type      VerificationTokenType
-  payload   Json? // Additional data as needed
-  expiresAt DateTime
-  createdAt DateTime              @default(now())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@index([userId, type, expiresAt]) // For lookups at usage time
-  @@index([expiresAt]) // For cleanup jobs
-}
 
 model Session {
   id        String    @id @default(cuid())
