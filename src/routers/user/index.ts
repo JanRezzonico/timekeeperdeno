@@ -20,9 +20,10 @@ userRouter.get("/", (c) => {
 });
 
 userRouter.patch("/", zValidator("json", patchSchema), async (c) => {
-  const { id } = c.get("user");
+  const { id, email } = c.get("user");
   const body = c.req.valid("json");
-  await patchUser(id, body);
+  const isChangingEmail = !!body.email && body.email !== email;
+  await patchUser(id, body, isChangingEmail);
   return c.status(204);
 });
 
