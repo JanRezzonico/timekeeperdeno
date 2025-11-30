@@ -19,7 +19,9 @@ const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
     payload = false;
   }
 
-  if (!payload) {
+  if (payload) {
+    c.set("jwtPayload", payload);
+  } else {
     const refreshToken = getCookie(c, cookies.refreshToken.name);
     if (!refreshToken) throw new HTTPException(401);
 
@@ -35,10 +37,7 @@ const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
       cookies.refreshToken.options
     );
     c.set("jwtPayload", { sub: userId });
-    await next();
-    return;
   }
-  c.set("jwtPayload", payload);
   await next();
 };
 

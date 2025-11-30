@@ -8,6 +8,10 @@ const schema = z.object({
   REFRESH_TOKEN_EXPIRATION_DAYS: z.coerce.number().min(1).default(30),
   REFRESH_TOKEN_SECRET: z.string().min(10),
   JWT_EXPIRATION_MINUTES: z.coerce.number().min(1).default(60),
+  EMAIL_VERIFICATION_TOKEN_EXPIRATION_HOURS: z.coerce
+    .number()
+    .min(1)
+    .default(24),
 });
 
 const parsedEnv = schema.safeParse(Deno.env.toObject());

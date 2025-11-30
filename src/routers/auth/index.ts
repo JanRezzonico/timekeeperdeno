@@ -8,6 +8,10 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import userSchema from "../../schemas/userSchema.ts";
 import cookies from "../../libs/cookies.ts";
 import { createRefreshToken, deleteRefreshToken } from "../../libs/redis.ts";
+import authMiddleware from "../../utils/middlewares/authMiddleware.ts";
+import { HTTPException } from "hono/http-exception";
+import sendVerificationEmail from "./sendVerificationEmail.ts";
+import verifyEmail from "./verifyEmail.ts";
 
 const authRouter = new Hono();
 
@@ -16,6 +20,10 @@ const loginSchema = z.object({
   password: z.string().nonempty(),
 });
 const signupSchema = userSchema;
+const emailVerificationQuerySchema = z.object({
+  token: z.string().nonempty(),
+  email: z.email(),
+});
 
 authRouter.post("/login", zValidator("json", loginSchema), async (c) => {
   const body = c.req.valid("json");
@@ -59,7 +67,25 @@ authRouter.post("/signup", zValidator("json", signupSchema), async (c) => {
   return c.json({ message: "Signup successful" });
 });
 
-// Auth routes do not need to be protected by authMiddleware
+authRouter.post("/verify-email", authMiddleware, async (c) => {
+  const { id, email, emailVerified } = c.get("user");
+  if (emailVerified) {
+    throw new HTTPException(400, { message: "Email already verified" });
+  }
+  await sendVerificationEmail(id, email);
+  console.log("Verification email sent to:", email);
+  return c.body(null, 204);
+});
+
+authRouter.get(
+  "/verify-email/confirm",
+  zValidator("query", emailVerificationQuerySchema),
+  async (c) => {
+    const { token, email } = c.req.valid("query");
+    await verifyEmail(token, email);
+    return c.body(null, 204);
+  }
+);
 
 export default authRouter;
 

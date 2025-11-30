@@ -7,6 +7,7 @@ import userSchema from "../../schemas/userSchema.ts";
 import { zValidator } from "@hono/zod-validator";
 import z from "@zod/zod";
 import patchUser from "./patchUser.ts";
+import { deleteEmailVerificationToken } from "../../libs/redis.ts";
 
 const userRouter = new Hono<{ Variables: AuthenticatedVariables }>();
 
@@ -23,14 +24,18 @@ userRouter.patch("/", zValidator("json", patchSchema), async (c) => {
   const { id, email } = c.get("user");
   const body = c.req.valid("json");
   const isChangingEmail = !!body.email && body.email !== email;
+  console.log("Is changing email:", isChangingEmail);
   await patchUser(id, body, isChangingEmail);
-  return c.status(204);
+  if (isChangingEmail) {
+    await deleteEmailVerificationToken(id, email);
+  }
+  return c.body(null, 204);
 });
 
 userRouter.delete("/", async (c) => {
   const { id } = c.get("user");
   await deleteUser(id);
-  return c.status(204);
+  return c.body(null, 204);
 });
 
 export default userRouter;
