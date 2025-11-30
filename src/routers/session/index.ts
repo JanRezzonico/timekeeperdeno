@@ -47,7 +47,7 @@ sessionRouter.post(
     const body = c.req.valid("json");
     const count = await createSessionForUser(body, userId);
     return c.json({ count });
-  }
+  },
 );
 
 sessionRouter.patch(
@@ -60,7 +60,7 @@ sessionRouter.patch(
     const body = c.req.valid("json");
     await patchSessionForUser(id, body, userId);
     return c.json({ message: "Success" });
-  }
+  },
 );
 
 sessionRouter.delete("/:id", async (c) => {

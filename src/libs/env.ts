@@ -16,7 +16,7 @@ const parsedEnv = schema.safeParse(Deno.env.toObject());
 if (!parsedEnv.success) {
   console.error(
     "Invalid environment variables:",
-    z.treeifyError(parsedEnv.error)
+    z.treeifyError(parsedEnv.error),
   );
   Deno.exit(1);
 }

@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 const patchUser = async (
   id: string,
   body: PatchUserSchema,
-  isChangingEmail: boolean
+  isChangingEmail: boolean,
 ) => {
   try {
     const passwordHash = body.password

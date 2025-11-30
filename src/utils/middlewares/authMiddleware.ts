@@ -13,7 +13,7 @@ import { signJwt } from "../../libs/jwt.ts";
 const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
   const token = getCookie(c, cookies.jwt.name);
   const payload = await Jwt.verify(token || "", env.JWT_SECRET).catch(
-    () => null
+    () => null,
   );
 
   if (payload) {
@@ -33,7 +33,7 @@ const jwtCheck = async (c: AuthenticatedContext, next: Next) => {
       c,
       cookies.refreshToken.name,
       newToken,
-      cookies.refreshToken.options
+      cookies.refreshToken.options,
     );
     console.log("Refresh successful, new tokens issued.");
     c.set("jwtPayload", { sub: userId });

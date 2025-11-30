@@ -8,10 +8,11 @@ const verifyEmail = async (token: string, email: string) => {
   const consumationResult = await consumeEmailVerificationToken(
     user.id,
     email,
-    token
+    token,
   );
-  if (!consumationResult)
+  if (!consumationResult) {
     throw new HTTPException(400, { message: "Invalid or expired token" });
+  }
   await db.user.update({
     where: { id: user.id },
     data: { emailVerified: true },

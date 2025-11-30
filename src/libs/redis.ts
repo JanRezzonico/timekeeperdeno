@@ -64,7 +64,7 @@ const createEmailVerificationToken = async (userId: string, email: string) => {
 const consumeEmailVerificationToken = async (
   userId: string,
   email: string,
-  token: string
+  token: string,
 ) => {
   const tokenKey = `email_verification_token:${userId}-${email}`;
   const tokenHash = await redis.get(tokenKey);
@@ -83,10 +83,10 @@ const deleteEmailVerificationToken = async (userId: string, email: string) => {
 export default redis;
 
 export {
-  createRefreshToken,
-  consumeRefreshToken,
-  deleteRefreshToken,
-  createEmailVerificationToken,
   consumeEmailVerificationToken,
+  consumeRefreshToken,
+  createEmailVerificationToken,
+  createRefreshToken,
   deleteEmailVerificationToken,
+  deleteRefreshToken,
 };
