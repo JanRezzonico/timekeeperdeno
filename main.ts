@@ -1,9 +1,13 @@
 import { Hono } from "hono";
-import db from "./src/libs/db.ts";
+export { default as appDb } from "./src/libs/db.ts";
 import authRouter from "./src/routers/auth/index.ts";
 import userRouter from "./src/routers/user/index.ts";
 
 const app = new Hono();
+
+app.get("/", (c) => {
+  return c.json({ message: "Welcome to the Timekeeper API" });
+});
 
 app.route("/auth", authRouter);
 
@@ -14,4 +18,4 @@ if (import.meta.main) {
   Deno.serve(app.fetch);
 }
 
-export { app, db }; // Export app and db for testing purposes
+export { app }; // Export app and db for testing purposes
