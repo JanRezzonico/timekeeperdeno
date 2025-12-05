@@ -4,7 +4,7 @@ import { format } from "date-fns";
 const prepareException = (exception: Exception) => {
   const stripped = {
     id: exception.id,
-    notes: exception.notes,
+    note: exception.note,
     type: exception.type,
     start: exception.start,
     end: exception.end,

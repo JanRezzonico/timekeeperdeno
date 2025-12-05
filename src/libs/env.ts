@@ -9,6 +9,7 @@ const schema = z.object({
   REFRESH_TOKEN_SECRET: z.string().min(10),
   JWT_EXPIRATION_MINUTES: z.coerce.number().min(1),
   EMAIL_VERIFICATION_TOKEN_EXPIRATION_HOURS: z.coerce.number().min(1),
+  DENO_TEST_ENV: z.coerce.boolean().default(false),
 });
 
 const parsedEnv = schema.safeParse(Deno.env.toObject());
@@ -16,7 +17,7 @@ const parsedEnv = schema.safeParse(Deno.env.toObject());
 if (!parsedEnv.success) {
   console.error(
     "Invalid environment variables:",
-    z.treeifyError(parsedEnv.error),
+    z.treeifyError(parsedEnv.error)
   );
   Deno.exit(1);
 }

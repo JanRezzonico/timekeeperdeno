@@ -10,4 +10,11 @@ const db = new PrismaClient({
 
 await db.$connect(); // Explicitly ensure the connection is established
 
+if (env.DENO_TEST_ENV) {
+  console.log("Running in test environment, resetting database...");
+  db.session.deleteMany();
+  db.exception.deleteMany();
+  db.user.deleteMany();
+}
+
 export default db;

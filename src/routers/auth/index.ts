@@ -36,7 +36,7 @@ authRouter.post("/login", zValidator("json", loginSchema), async (c) => {
     c,
     cookies.refreshToken.name,
     refreshToken,
-    cookies.refreshToken.options,
+    cookies.refreshToken.options
   );
 
   return c.json({ message: "Login successful" });
@@ -61,10 +61,10 @@ authRouter.post("/signup", zValidator("json", signupSchema), async (c) => {
     c,
     cookies.refreshToken.name,
     refreshToken,
-    cookies.refreshToken.options,
+    cookies.refreshToken.options
   );
 
-  return c.json({ message: "Signup successful" });
+  return c.json({ message: "Signup successful" }, 201);
 });
 
 authRouter.post("/verify-email", authMiddleware, async (c) => {
@@ -84,7 +84,7 @@ authRouter.get(
     const { token, email } = c.req.valid("query");
     await verifyEmail(token, email);
     return c.json({ message: "Success" });
-  },
+  }
 );
 
 export default authRouter;
