@@ -46,7 +46,7 @@ model Exception {
   start     DateTime
   end       DateTime
   type      String
-  notes     String?
+  note      String   @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
